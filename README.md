@@ -1,6 +1,4 @@
-# todolist
-
-> PWA Workshop - ToDo List
+## PWA Workshop - App
 
 ## Build Setup
 
