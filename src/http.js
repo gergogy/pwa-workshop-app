@@ -1,10 +1,15 @@
-import { API_BASE_URL } from '../config'
+import { API_BASE_URL } from './config'
 import axios from 'axios'
 import store from './store'
 
-export default axios.create({
-  baseURL: API_BASE_URL + '/api',
-  headers: {
-    Authorization: `Bearer ${store.token}`
+const instance = axios.create({baseURL: API_BASE_URL + '/api'})
+
+instance.interceptors.request.use(config => {
+  if (store.state.token) {
+    config.headers.Authorization = `Bearer ${store.state.token}`
   }
+
+  return config
 })
+
+export default instance

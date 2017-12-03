@@ -4,6 +4,7 @@
       <md-card class="md-flex-50 md-flex-small-100">
         <md-card-header>
           <div class="md-title">Login</div>
+          <span class="md-error" v-if="error" style="color: red">Bad credentials</span>
         </md-card-header>
 
         <md-card-content>
@@ -30,15 +31,9 @@
 </template>
 
 <script>
-  import { validationMixin } from 'vuelidate'
-  import {
-    required,
-    email,
-    minLength,
-    maxLength
-  } from 'vuelidate/lib/validators'
+  import { required, email } from 'vuelidate/lib/validators'
   import axios from 'axios'
-  import { API_BASE_URL, JWT_COOKIE_NAME } from '../../../config'
+  import { API_BASE_URL, JWT_COOKIE_NAME } from '../../config'
 
   export default {
     name: 'login',
@@ -47,7 +42,8 @@
         email: null,
         password: null
       },
-      sending: false
+      sending: false,
+      error: false
     }),
     validations: {
       form: {
@@ -81,6 +77,7 @@
         .then(this.successfulLogin)
         .catch(err => {
           this.sending = false
+          this.error = true
           this.$store.commit('hideLoading')
         })
       },

@@ -55,7 +55,7 @@
 <script>
   import { required, email, minLength } from 'vuelidate/lib/validators'
   import axios from 'axios'
-  import { API_BASE_URL, JWT_COOKIE_NAME } from '../../../config'
+  import { API_BASE_URL, JWT_COOKIE_NAME } from '../../config'
 
   export default {
     name: 'register',

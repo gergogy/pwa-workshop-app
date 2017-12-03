@@ -24,6 +24,10 @@
         <md-toolbar class="md-transparent" md-elevation="0">Navigation</md-toolbar>
 
         <md-list>
+          <md-list-item to="/">
+            <md-icon>&#xE896;</md-icon>
+            <span class="md-list-item-text">My ToDos</span>
+          </md-list-item>
           <md-list-item @click="logout">
             <md-icon>&#xE8AC;</md-icon>
             <span class="md-list-item-text">Logout</span>
@@ -31,7 +35,7 @@
         </md-list>
       </md-app-drawer>
 
-      <md-app-content class="selection-red">
+      <md-app-content>
         <router-view></router-view>
       </md-app-content>
     </md-app>
@@ -53,7 +57,7 @@
 
 <script>
 import CustomCookieLaw from './components/misc/CustomCookieLaw'
-import { API_BASE_URL, JWT_COOKIE_NAME } from '../config'
+import { API_BASE_URL, JWT_COOKIE_NAME } from './config'
 import axios from 'axios'
 
 export default {
@@ -64,10 +68,11 @@ export default {
   components: { CustomCookieLaw },
   methods: {
     autoLogin () {
-      this.$store.commit('showLoading')
       const cookieToken = this.$cookies.get(JWT_COOKIE_NAME)
 
       if (cookieToken && cookieToken.length) {
+        this.$store.commit('showLoading')
+
         axios.get(API_BASE_URL + '/api/tokenLogin', {
           headers: {Authorization: `Bearer ${cookieToken}`}
         })
@@ -78,7 +83,7 @@ export default {
             token: response.data.token,
             user: response.data.userData
           })
-          this.$router.replace('/')
+          this.$router.push("/")
         })
         .catch(err => {
           this.$store.commit('hideLoading')

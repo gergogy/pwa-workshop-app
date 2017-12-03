@@ -5,7 +5,6 @@
       md-icon="done_all"
       md-label="Nothing to do"
       md-description="Create a ToDo or enjoy your day!">
-      <md-button class="md-primary md-raised">Create todo</md-button>
     </md-empty-state>
   </div>
 </template>

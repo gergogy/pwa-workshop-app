@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Login from '@/components/user/Login'
 import Register from '@/components/user/Register'
 import Home from '@/components/Home'
+import EditTodo from '@/components/todo/Edit'
 import store from '../store'
 
 Vue.use(Router)
@@ -33,6 +34,12 @@ export default new Router({
       path: '/login',
       name: 'Login',
       component: Login
-    }
+    },
+    {
+      path: '/todo/:id',
+      name: 'EditTodo',
+      component: EditTodo,
+      beforeEnter: protectRoute
+    },
   ]
 })
