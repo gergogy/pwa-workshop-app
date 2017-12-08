@@ -38,8 +38,8 @@ export default {
     createDialog: false
   }),
   computed: {
-    sortedTodos: function() {
-      function compare(a, b) {
+    sortedTodos: function () {
+      return this.todos.sort((a, b) => {
         if (a.title < b.title) {
           return -1;
         }
@@ -47,9 +47,7 @@ export default {
           return 1;
         }
         return 0;
-      }
-
-      return this.todos.sort(compare);
+      })
     }
   },
   components: { EmptyState, TodoListItem, CreateTodo },

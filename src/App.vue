@@ -2,13 +2,12 @@
   <div class="page-container">
     <md-progress-bar v-if="$store.state.loading" md-mode="indeterminate" class="md-accent" />
     <custom-cookie-law/>
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
     <md-app md-waterfall md-mode="fixed-last">
       <md-app-toolbar class="md-primary">
         <div class="md-toolbar-row">
           <div class="md-toolbar-section-start">
             <md-button v-if="$store.state.token && $store.state.user" class="md-icon-button" @click="menuVisible = !menuVisible">
-              <md-icon>menu</md-icon>
+              <md-icon>&#xE5D2;</md-icon>
             </md-button>
 
             <span class="md-title">Ultimate ToDo List</span>
@@ -87,7 +86,7 @@ export default {
         })
         .catch(err => {
           this.$store.commit('hideLoading')
-          this.$cookies.remove(JWT_COOKIE_NAME)
+          //this.$cookies.remove(JWT_COOKIE_NAME)
         })
       }
     },
@@ -96,9 +95,21 @@ export default {
       this.$store.commit('logout')
       this.$router.replace('/login')
       this.$cookies.remove(JWT_COOKIE_NAME)
+    },
+    installServiceWorker () {
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(registration => {
+            console.log('SW registered: ', registration);
+          }).catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+        });
+      }
     }
   },
   mounted () {
+    this.installServiceWorker()
     this.autoLogin()
   },
 }
