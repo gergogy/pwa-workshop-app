@@ -109,11 +109,11 @@ workboxSW.precache([
   },
   {
     "url": "/index.html",
-    "revision": "f4164527901aae8d63f28661b9d2623b"
+    "revision": "43731331418f502833939fe33aec168a"
   },
   {
     "url": "manifest.json",
-    "revision": "13d892b9f458b6703970ddec8ac67a9e"
+    "revision": "6f048a80eec358caf9c15692a2327b0c"
   }
 ]);
 

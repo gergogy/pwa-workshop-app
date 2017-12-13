@@ -1,7 +1,7 @@
 {
   "name": "ToDo List",
   "short_name": "ToDo List",
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#fff",
   "description": "A simply todolist app",
