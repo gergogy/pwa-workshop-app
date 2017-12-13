@@ -38,16 +38,11 @@ export default {
       return `/todo/${this.id}`
     },
     modifyState () {
-      this.$store.commit('showLoading')
-
-      http.put(this.getTodoUri(), this.getStatePayload())
-      .then(response => {
-        this.$store.commit('hideLoading')
-      })
-      .catch(err => {
-        this.$store.commit('hideLoading')
-        console.log(err)
-      })
+      const data = {
+        id: this.id,
+        payload: this.getStatePayload()
+      }
+      this.$store.dispatch('updateTodo', data)
     },
     getStatePayload () {
       return {
@@ -56,16 +51,16 @@ export default {
         }
       }
     },
+    getEventData () {
+      return {
+        _id: this.id,
+        title: this.title
+      }
+    },
     deletePermanently () {
-      http.delete(this.getTodoUri(), this.getStatePayload())
-      .then(response => {
-        this.$store.commit('hideLoading')
-        this.$emit('todo-deleted', this.id)
-      })
-      .catch(err => {
-        this.$store.commit('hideLoading')
-        console.log(err)
-      })
+      console.log(this.id)
+      this.$store.dispatch('removeTodo', this.id)
+      this.$emit('todo-deleted', this.getEventData())
     }
   }
 }

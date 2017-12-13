@@ -54,14 +54,11 @@ export default {
   },
   methods: {
     fetchData () {
-      http.get(`/todo/${this.$route.params.id}`).then(response => {
-        this.$store.commit('hideLoading')
-        this.form.title = response.data.title
-        this.form.description = response.data.description
-      }).catch(err => {
-        this.$store.commit('hideLoading')
-        console.log(err)
-      })
+      this.$store.dispatch('getTodo', this.$route.params.id).then(t => {
+        this.form.title = t.title
+        this.form.description = t.description
+        console.log('todo', t)
+      }).catch(err => console.log(err))
     },
     getValidationClass (fieldName) {
       const field = this.$v.form[fieldName]
@@ -80,17 +77,15 @@ export default {
       }
     },
     tryModify () {
-      http.put(`/todo/${this.$route.params.id}`, this.getUpdatePayload())
-      .then(response => {
-        this.$store.commit('hideLoading')
-        this.snackbarMessage = 'Successfully saved.'
-        this.showSnackbar = true
-      }).catch(err => {
-        this.$store.commit('hideLoading')
-        this.snackbarMessage = "Can't saved. Try again later!"
-        this.showSnackbar = true
-        console.log(err)
-      })
+      const data = {
+        id: this.$route.params.id,
+        payload: this.getUpdatePayload()
+      }
+
+      this.$store.dispatch('updateTodo', data)
+
+      this.snackbarMessage = 'Successfully saved.'
+      this.showSnackbar = true
     },
     getUpdatePayload () {
       return {

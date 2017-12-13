@@ -11,16 +11,15 @@
             <md-step id="first" md-label="Login credentials" md-description="Required" :md-error="steps.first.currentError" :md-editable="false" :md-done.sync="steps.first.done">
                 <md-field :class="getValidationClass('email')">
                   <label for="email">Email</label>
-                  <md-input type="email" name="email" id="email" autocomplete="email" v-model="form.email" :disabled="sending" @input="$v.account.$touch"/>
+                  <md-input type="email" name="email" id="email" autocomplete="email" v-model="form.email" :disabled="sending || !isOnline" @input="$v.account.$touch"/>
                   <span class="md-error" v-if="!$v.form.email.required">The email is required</span>
                   <span class="md-error" v-else-if="!$v.form.email.email">Invalid email</span>
                   <span class="md-error" v-else-if="steps.first.currentError">{{steps.first.currentError}}</span>
                 </md-field>
-                {{$v.email}}
 
                 <md-field :class="getValidationClass('password')">
                   <label for="password">Password</label>
-                  <md-input type="password" name="password" id="password" autocomplete="password" v-model="form.password" :disabled="sending" @input="$v.account.$touch"/>
+                  <md-input type="password" name="password" id="password" autocomplete="password" v-model="form.password" :disabled="sending || !isOnline" @input="$v.account.$touch"/>
                   <span class="md-error" v-if="!$v.form.password.required">Password is required!</span>
                   <span class="md-error" v-if="!$v.form.password.minLength">Too short, at least 8 characters</span>
                 </md-field>
@@ -31,14 +30,14 @@
             <md-step id="second" md-label="Personal details" :md-error="steps.second.currentError" md-description="Required" :md-editable="false" :md-done.sync="steps.second.done">
               <md-field :class="getValidationClass('firstName')">
                 <label for="first-name">First Name</label>
-                <md-input name="firstname" id="first-name" autocomplete="given-name" v-model="form.firstName" :disabled="sending" @input="$v.personal.$touch"/>
+                <md-input name="firstname" id="first-name" autocomplete="given-name" v-model="form.firstName" :disabled="sending || !isOnline" @input="$v.personal.$touch"/>
                 <span class="md-error" v-if="!$v.form.firstName.required">The first name is required</span>
                 <span class="md-error" v-else-if="!$v.form.firstName.minlength">Invalid first name</span>
               </md-field>
 
               <md-field :class="getValidationClass('lastName')">
                 <label for="last-name">Last Name</label>
-                <md-input name="lastname" id="last-name" autocomplete="family-name" v-model="form.lastName" :disabled="sending" @input="$v.personal.$touch"/>
+                <md-input name="lastname" id="last-name" autocomplete="family-name" v-model="form.lastName" :disabled="sending || !isOnline" @input="$v.personal.$touch"/>
                 <span class="md-error" v-if="!$v.form.lastName.required">The last name is required</span>
                 <span class="md-error" v-else-if="!$v.form.lastName.minlength">Invalid last name</span>
               </md-field>
@@ -49,6 +48,9 @@
         </md-card-content>
       </md-card>
     </form>
+    <md-snackbar md-position="center" :md-duration="Infinity" :md-active="!isOnline" md-persistent>
+      <span>You are offline!</span>
+    </md-snackbar>
   </div>
 </template>
 
@@ -59,6 +61,11 @@
 
   export default {
     name: 'register',
+    computed: {
+      isOnline () {
+        return navigator.onLine;
+      }
+    },
     data: () => ({
       form: {
         firstName: null,

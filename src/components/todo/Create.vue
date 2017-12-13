@@ -65,19 +65,15 @@ export default {
     },
     tryCreate () {
       this.$store.commit('showLoading')
-      http.post('/todo', this.getPostPayload()).then(response => {
-        this.$store.commit('hideLoading')
-        this.$emit('todo-created', this.getEventData(response.data.id))
-        this.close()
-      }).catch(err => {
-        this.$store.commit('hideLoading')
-        console.log(err)
-        this.show = false
-      })
+      this.$store.dispatch('addTodo', this.getPostPayload()).then(res => {
+        console.log(res)
+        this.$emit('todo-created', this.getEventData(res))
+      }, err => console.log(err))
     },
     getPostPayload () {
       return {
         insertData: {
+          _id: this.mongoObjectId(),
           done: false,
           title: this.form.title,
           description: this.form.description
@@ -96,7 +92,11 @@ export default {
       this.form.title = ''
       this.form.description = ''
       this.$v.$reset()
-      this.$emit('update:showDialog', false)
+      this.$emit('todo-created')
+    },
+    mongoObjectId () {
+      const timestamp = (new Date().getTime() / 1000 | 0).toString(16)
+      return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, () => (Math.random() * 16 | 0).toString(16).toLowerCase())
     }
   }
 }

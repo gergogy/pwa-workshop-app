@@ -8,13 +8,13 @@ import Vuelidate from 'vuelidate'
 import VueCookies from 'vue-cookies'
 import router from './router'
 import store from './store'
+import db from './db'
 
 Vue.config.productionTip = false
 
 Vue.use(VueMaterial)
 Vue.use(Vuelidate)
 Vue.use(VueCookies)
-
 
 /* eslint-disable no-new */
 new Vue({

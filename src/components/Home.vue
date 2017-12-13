@@ -2,7 +2,7 @@
   <div>
     <div class="md-layout md-alignment-center-center">
       <div class="md-layout-item md-size-50">
-        <div v-if="!loading && todos.length" class="md-layout-item">
+        <div v-if="!loading && sortedTodos.length" class="md-layout-item">
           <md-list>
             <todo-list-item v-for="todo in sortedTodos" :key="todo._id" :id="todo._id" :title="todo.title" :done="todo.done" :description="todo.description" @todo-deleted="onDelete"/>
           </md-list>
@@ -30,8 +30,7 @@ import CreateTodo from './todo/Create'
 export default {
   name: 'home',
   data: () => ({
-    todos: [],
-    loading: true,
+    loading: false,
     showSnackbar: false,
     snackbarMessage: '',
     duration: 2500,
@@ -39,60 +38,29 @@ export default {
   }),
   computed: {
     sortedTodos: function () {
-      return this.todos.sort((a, b) => {
-        if (a.title < b.title) {
-          return -1;
-        }
-        if (a.title > b.title) {
-          return 1;
-        }
-        return 0;
-      })
+      return this.$store.getters.getTodos
     }
   },
   components: { EmptyState, TodoListItem, CreateTodo },
   mounted () {
-    this.$store.commit('showLoading')
-    this.fetchTodos()
+    this.$store.dispatch('getTodos')
   },
   methods: {
     showDialog () {
       this.createDialog = true
     },
-    fetchTodos () {
-      this.loading = true
-
-      http.get('/todo').then(response => {
-        this.$store.commit('hideLoading')
-        this.todos = response.data
-        this.loading = false
-      }).catch(err => {
-        this.$store.commit('hideLoading')
-        this.loading = false
-
-        if (err.response.status !== 404) {
-          console.log(err)
-        }
-      })
-    },
     onCreate (todo) {
-      this.todos.push(todo)
-      this.snackbarMessage = `"${todo.title}" successfully created`
-      this.showSnackbar = true
+      if (todo) {
+        this.snackbarMessage = `"${todo.title}" successfully created`
+        this.showSnackbar = true
+      }
+
+      this.createDialog = false
     },
-    onDelete (id) {
-      let index;
-
-      this.todos.forEach((todo, i) => {
-        if (todo._id === id) {
-          this.snackbarMessage = `"${todo.title}" successfully deleted`
-          this.showSnackbar = true
-          index = i
-        }
-      })
-
-      if (Number.isInteger(index)) {
-        this.todos.splice(index, 1)
+    onDelete (todo) {
+      if (todo) {
+        this.snackbarMessage = `"${todo.title}" successfully deleted`
+        this.showSnackbar = true
       }
     }
   }

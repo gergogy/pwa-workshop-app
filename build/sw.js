@@ -1,9 +1,11 @@
 importScripts('workbox-sw.prod.v2.1.2.js');
+importScripts('workbox-background-sync.prod.v2.0.3.js');
 
 const workboxSW = new WorkboxSW({
   skipWaiting: true,
   clientsClaim: true
 });
+
 workboxSW.precache([]);
 
 //Google Fonts caching
@@ -29,7 +31,7 @@ workboxSW.router.registerRoute(/\/app.js/,
 );
 
 // API caching
-workboxSW.router.registerRoute(/http:\/\/localhost:81\/api\/.*/,
+workboxSW.router.registerRoute(/http:\/\/localhost:81\/api\/(tokenLogin|login)/,
   workboxSW.strategies.networkFirst({
     cacheName: 'api-cache',
     cacheExpiration: {
@@ -37,4 +39,30 @@ workboxSW.router.registerRoute(/http:\/\/localhost:81\/api\/.*/,
     },
     cacheableResponse: {statuses: [200]}
   })
-);
+)
+
+let bgQueue = new workbox.backgroundSync.QueuePlugin({
+  callbacks: {
+    replayDidSucceed: async(hash, res) => {
+      console.log('Background Sync CB', hash, res)
+    }
+  }
+});
+
+workboxSW.router.registerRoute(
+  /^http:\/\/localhost:81\/api\/todo/,
+  workboxSW.strategies.networkOnly({plugins: [bgQueue]}),
+  'POST'
+)
+
+workboxSW.router.registerRoute(
+  /^http:\/\/localhost:81\/api\/todo\/.*/,
+  workboxSW.strategies.networkOnly({plugins: [bgQueue]}),
+  'PUT'
+)
+
+workboxSW.router.registerRoute(
+  /^http:\/\/localhost:81\/api\/todo\/.*/,
+  workboxSW.strategies.networkOnly({plugins: [bgQueue]}),
+  'DELETE'
+)

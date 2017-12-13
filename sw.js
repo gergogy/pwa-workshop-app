@@ -1,9 +1,11 @@
 importScripts('workbox-sw.prod.v2.1.2.js');
+importScripts('workbox-background-sync.prod.v2.0.3.js');
 
 const workboxSW = new WorkboxSW({
   skipWaiting: true,
   clientsClaim: true
 });
+
 workboxSW.precache([
   {
     "url": "static/images/android-icon-144x144.png",
@@ -107,7 +109,7 @@ workboxSW.precache([
   },
   {
     "url": "/index.html",
-    "revision": "e255e6bd81d999aed76a5971287abd29"
+    "revision": "f4164527901aae8d63f28661b9d2623b"
   },
   {
     "url": "manifest.json",
@@ -138,7 +140,7 @@ workboxSW.router.registerRoute(/\/app.js/,
 );
 
 // API caching
-workboxSW.router.registerRoute(/http:\/\/localhost:81\/api\/.*/,
+workboxSW.router.registerRoute(/http:\/\/localhost:81\/api\/(tokenLogin|login)/,
   workboxSW.strategies.networkFirst({
     cacheName: 'api-cache',
     cacheExpiration: {
@@ -146,4 +148,30 @@ workboxSW.router.registerRoute(/http:\/\/localhost:81\/api\/.*/,
     },
     cacheableResponse: {statuses: [200]}
   })
-);
+)
+
+let bgQueue = new workbox.backgroundSync.QueuePlugin({
+  callbacks: {
+    replayDidSucceed: async(hash, res) => {
+      console.log('Background Sync CB', hash, res)
+    }
+  }
+});
+
+workboxSW.router.registerRoute(
+  /^http:\/\/localhost:81\/api\/todo/,
+  workboxSW.strategies.networkOnly({plugins: [bgQueue]}),
+  'POST'
+)
+
+workboxSW.router.registerRoute(
+  /^http:\/\/localhost:81\/api\/todo\/.*/,
+  workboxSW.strategies.networkOnly({plugins: [bgQueue]}),
+  'PUT'
+)
+
+workboxSW.router.registerRoute(
+  /^http:\/\/localhost:81\/api\/todo\/.*/,
+  workboxSW.strategies.networkOnly({plugins: [bgQueue]}),
+  'DELETE'
+)
