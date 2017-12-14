@@ -66,3 +66,10 @@ workboxSW.router.registerRoute(
   workboxSW.strategies.networkOnly({plugins: [bgQueue]}),
   'DELETE'
 )
+
+self.addEventListener('notificationclick', function(e) {
+  console.log(e)
+});
+self.addEventListener('notificationclose', function(e) {
+  console.log(e)
+});

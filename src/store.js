@@ -12,9 +12,13 @@ export default new Vuex.Store({
     token: false,
     user: undefined,
     loading: false,
-    todos: []
+    todos: [],
+    swReg: undefined
   },
   getters: {
+    getSwReg (state) {
+      return state.swReg
+    },
     getTodos (state) {
       return state.todos.sort((a, b) => {
         if (a.title < b.title) {
@@ -66,6 +70,10 @@ export default new Vuex.Store({
     },
     purgeTodos (state) {
       state.todos = []
+    },
+    setSwReg (state, swReg) {
+      state.swReg = swReg
+      console.log('mutation', state.swReg)
     }
   },
   actions: {
